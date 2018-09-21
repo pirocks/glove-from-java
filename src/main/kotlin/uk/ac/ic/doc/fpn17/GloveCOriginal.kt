@@ -13,6 +13,7 @@ class GloveCOriginal(
         val alpha: Double = 0.75,
         val windowSize: Int = 15,
         val vocabMinCount: Int = 5,
+        val learningRate: Double = 0.05,
         val workingDirectory: String = "/mnt/harddrive1/cglove-test/"//System.getProperty("java.io.tmpdir") + "/working"
 ) {
     companion object {
@@ -22,7 +23,7 @@ class GloveCOriginal(
                                  embeddingSize: Int = 50,
                                  alpha: Double = 0.75,
                                  windowSize: Int = 15,
-                                 vocabMinCount: Int = 5): GloveCOriginal {
+                                 vocabMinCount: Int = 5,learningRate:Double = 0.05): GloveCOriginal {
             val directoryAppendNameBase = "/mnt/harddrive1/cglove-original/"
             var reTryName = 0
             var candidateWorkingDirectory = File(directoryAppendNameBase, """run$reTryName""")
@@ -39,7 +40,8 @@ class GloveCOriginal(
                     embeddingSize,
                     alpha,
                     windowSize,
-                    vocabMinCount, workingDirectory.path)
+                    vocabMinCount,
+                    learningRate, workingDirectory.path)
         }
     }
 
@@ -73,7 +75,8 @@ class GloveCOriginal(
                 Pair("EMBEDDING_SIZE=50", "EMBEDDING_SIZE=$embeddingSize"),
                 Pair("MAX_ITER=15", "MAX_ITER=$maxIter"),
                 Pair("WINDOW_SIZE=15", "WINDOW_SIZE=$windowSize"),
-                Pair("VOCAB_MIN_COUNT=5", "VOCAB_MIN_COUNT=$vocabMinCount")
+                Pair("VOCAB_MIN_COUNT=5", "VOCAB_MIN_COUNT=$vocabMinCount"),
+                Pair("LEARNING_RATE=0.05", "LEARNING_RATE=$learningRate")
         ))
         extractResource("GloVe/build/cooccur")
         extractResource("GloVe/build/glove")
