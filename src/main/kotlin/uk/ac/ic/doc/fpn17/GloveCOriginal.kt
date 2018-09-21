@@ -60,7 +60,7 @@ class GloveCOriginal(
         pb.directory(File(workingDirectory))
         pb.redirectError(ProcessBuilder.Redirect.INHERIT)
         pb.redirectOutput(ProcessBuilder.Redirect.INHERIT)
-        val p = pb.start();
+        val p = pb.start()
         p.waitFor()
 
         return WordVectorSerializer.readWord2VecModel(File(workingDirectory, "vector_output.txt"))
