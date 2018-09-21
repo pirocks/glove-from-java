@@ -11,6 +11,7 @@
 
     <properties>
         <kotlin.version>1.2.61</kotlin.version>
+        <dl4j.version>0.9.1</dl4j.version>
     </properties>
 
     <repositories>
@@ -42,6 +43,11 @@
             <artifactId>deeplearning4j-nlp</artifactId>
             <version>0.9.1</version>
         </dependency>
+        <!--<dependency>
+            <groupId>org.nd4j</groupId>
+            <artifactId>nd4j-native</artifactId>
+            <version>0.9.1</version>
+        </dependency>-->
     </dependencies>
 
 
