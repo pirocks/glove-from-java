@@ -4,9 +4,10 @@ import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer
 import org.deeplearning4j.models.word2vec.Word2Vec
 import java.io.File
 import java.nio.charset.Charset
+import kotlin.streams.toList
 
 class GloveCOriginal(
-        val data: Collection<Collection<String>>,
+        val walksData: Collection<Collection<String>>,
         val memoryGB: Double = 4.0,
         val maxIter: Int = 50,
         val embeddingSize: Int = 50,
@@ -49,12 +50,10 @@ class GloveCOriginal(
         File(workingDirectory).mkdirs()
         extractToWorkingDirectory()
         val vocab = mutableMapOf<String, Int>()
-        val dataFileContents = data.parallelStream().map {
-            it.reduce { acc, s ->
-                "$acc $s"
-            }
-        }.map { it + "\n" }.reduce { acc, s -> "$acc$s" }
-        File(workingDirectory, "data.txt").writeText(dataFileContents.orElseThrow { IllegalArgumentException("Something was wrong with the data provided. Make sure there are no empty collections inputted.") })
+        val dataFileContents = walksData.parallelStream().map {
+            it.joinToString { _ -> " " }
+        }.toList().joinToString { "\n" }
+        File(workingDirectory, "walksData.txt").writeText(dataFileContents)
     }
 
     fun runBlocking(): Word2Vec {
