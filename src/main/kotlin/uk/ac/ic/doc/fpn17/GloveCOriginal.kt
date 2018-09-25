@@ -51,8 +51,8 @@ class GloveCOriginal(
         extractToWorkingDirectory()
         val vocab = mutableMapOf<String, Int>()
         val dataFileContents = walksData.parallelStream().map {
-            it.joinToString { _ -> " " }
-        }.toList().joinToString { "\n" }
+            it.joinToString(separator = " " ,transform = {s -> s})
+        }.toList().joinToString( separator = "\n", transform = {s -> s} )
         File(workingDirectory, "data.txt").writeText(dataFileContents)
     }
 
@@ -64,6 +64,7 @@ class GloveCOriginal(
         val p = pb.start()
         p.waitFor()
 
+        println("Glove run complete, loading vectors into memory")
         return WordVectorSerializer.readWord2VecModel(File(workingDirectory, "vector_output.txt"))
     }
 
