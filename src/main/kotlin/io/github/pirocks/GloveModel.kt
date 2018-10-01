@@ -4,7 +4,13 @@ import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer
 import org.deeplearning4j.models.word2vec.Word2Vec
 import java.io.File
 import java.nio.charset.Charset
+import java.nio.file.Files
 import kotlin.streams.toList
+import java.nio.file.Files.setPosixFilePermissions
+import java.nio.file.attribute.PosixFilePermission
+import java.util.HashSet
+
+
 
 /**
  * Not recommend that you use this constructor directly. @see <code> io.github.pirocks.GloveModel.Companion.createInNewDirectory </code>
@@ -18,7 +24,7 @@ class GloveModel(
         val windowSize: Int = 15,
         val vocabMinCount: Int = 5,
         val learningRate: Double = 0.05,
-        val workingDirectory: String = File(System.getProperty("java.io.tmpdir"),"/c-glove-from-java/single-run").absolutePath
+        val workingDirectory: String = File(".","/c-glove-from-java/single-run").absolutePath
 ) {
     companion object {
 
@@ -43,7 +49,7 @@ class GloveModel(
                                         windowSize: Int = 15,
                                         vocabMinCount: Int = 5,
                                         learningRate: Double = 0.05,
-                                        baseDirectory: String = File(System.getProperty("java.io.tmpdir"),"c-glove-from-java").absolutePath): GloveModel {
+                                        baseDirectory: String = File(/*System.getProperty("java.io.tmpdir")*/".","c-glove-from-java").absolutePath): GloveModel {
             var reTryName = 0
             var candidateWorkingDirectory = File(baseDirectory, """run$reTryName""")
             while (candidateWorkingDirectory.exists()) {
@@ -78,7 +84,7 @@ class GloveModel(
      * @return A dl4j Word2Vec model, containing the vectors gennerated by GloVe.
      */
     fun runBlocking(): Word2Vec {
-        val pb = ProcessBuilder(File(workingDirectory, "run.sh").path);
+        val pb = ProcessBuilder(File(workingDirectory, "GloVe/run.sh").path);
         pb.directory(File(workingDirectory))
         pb.redirectError(ProcessBuilder.Redirect.INHERIT)
         pb.redirectOutput(ProcessBuilder.Redirect.INHERIT)
@@ -90,7 +96,7 @@ class GloveModel(
     }
 
     private fun extractToWorkingDirectory() {
-        extractResource("run.sh", mapOf(
+        extractResource("GloVe/run.sh", mapOf(
                 Pair("ALPHA=0.75", "ALPHA=$alpha"),
                 Pair("MEMORY=4.0", "MEMORY=$memoryGB"),
                 Pair("EMBEDDING_SIZE=50", "EMBEDDING_SIZE=$embeddingSize"),
@@ -106,32 +112,21 @@ class GloveModel(
     }
 
     private fun extractResource(resource: String, replaceRules: Map<String, String> = emptyMap()) {
+        val perms = HashSet<PosixFilePermission>()
+        perms.add(PosixFilePermission.OWNER_READ)
+        perms.add(PosixFilePermission.OWNER_WRITE)
+        perms.add(PosixFilePermission.OWNER_EXECUTE)
         val `package` = "io/github/pirocks/"
         val resourceBytes = javaClass.classLoader.getResourceAsStream(`package` + resource).readBytes()
         val file = File(workingDirectory, resource)
         file.parentFile.mkdirs()
         if (replaceRules.isEmpty()) {
             file.writeBytes(resourceBytes)
-            return
+        }else{
+            var resourceContents = resourceBytes.toString(Charset.defaultCharset())
+            replaceRules.entries.forEach { resourceContents = resourceContents.replace(it.key, it.value) }
+            file.writeText(resourceContents)
         }
-        var resourceContents = resourceBytes.toString(Charset.defaultCharset())
-        replaceRules.entries.forEach { resourceContents = resourceContents.replace(it.key, it.value) }
-        file.writeText(resourceContents)
+        Files.setPosixFilePermissions(file.toPath(), perms)
     }
 }
-
-//fun main(args: Array<String>) {
-//    GloveModel.createInNewDirectory(arrayListOf(
-//            arrayListOf("a", "b", "c", "a", "a", "b", "c", "a", "a", "b", "c", "a", "a", "b", "c", "a")
-//            , arrayListOf("a", "b", "a", "c", "a", "b", "a", "c", "a", "b", "a", "c", "a", "b", "a", "c")
-//            , arrayListOf("a", "c", "b", "a", "a", "c", "b", "a", "a", "c", "b", "a", "a", "c", "b", "a")
-//            , arrayListOf("a", "b", "c", "a", "a", "b", "c", "a", "a", "b", "c", "a", "a", "b", "c", "a")
-//            , arrayListOf("a", "b", "a", "c", "a", "b", "a", "c", "a", "b", "a", "c", "a", "b", "a", "c")
-//            , arrayListOf("a", "c", "b", "a", "a", "c", "b", "a", "a", "c", "b", "a", "a", "c", "b", "a")
-//            , arrayListOf("a", "b", "a", "c", "a", "b", "a", "c", "a", "b", "a", "c", "a", "b", "a", "c")
-//            , arrayListOf("a", "a", "c", "b", "a", "a", "c", "b", "a", "a", "c", "b", "a", "a", "c", "b")
-//            , arrayListOf("a", "c", "a", "b", "a", "c", "a", "b", "a", "c", "a", "b", "a", "c", "a", "b")
-//            , arrayListOf("a", "b", "a", "c", "a", "b", "a", "c", "a", "b", "a", "c", "a", "b", "a", "c")
-//            , arrayListOf("a", "a", "b", "c", "a", "a", "b", "c", "a", "a", "b", "c", "a", "a", "b", "c")
-//            , arrayListOf("a", "b", "c", "a", "a", "b", "c", "a", "a", "b", "c", "a", "a", "b", "c", "a"))).runBlocking()
-//}

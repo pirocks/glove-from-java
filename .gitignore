@@ -279,7 +279,3 @@ m4/lt~obsolete.m4
 # Executables
 .idea/
 c-glove-from-java.iml
-src/main/java/
-src/test/
-/src/main/resources/uk/ac/ic/doc/fpn17/GloVe/.gitignore
-/src/main/resources/uk/ac/ic/doc/fpn17/GloVe/.travis.yml
