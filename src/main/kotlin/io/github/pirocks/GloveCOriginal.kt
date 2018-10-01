@@ -1,4 +1,4 @@
-package uk.ac.ic.doc.fpn17
+package io.github.pirocks
 
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer
 import org.deeplearning4j.models.word2vec.Word2Vec
@@ -85,7 +85,7 @@ class GloveCOriginal(
     }
 
     fun extractResource(resource: String, replaceRules: Map<String, String> = emptyMap()) {
-        val `package` = "uk/ac/ic/doc/fpn17/"
+        val `package` = "io/github/pirocks/"
         val resourceBytes = javaClass.classLoader.getResourceAsStream(`package` + resource).readBytes()
         val file = File(workingDirectory, resource)
         file.parentFile.mkdirs()
