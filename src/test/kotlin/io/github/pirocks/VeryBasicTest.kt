@@ -4,6 +4,9 @@ import org.junit.Test
 
 class VeryBasicTest{
 
+    /**
+     * Basic test which checks that glove is run without failure.
+     */
     @Test
     fun basicTest() {
         val veryBasicDataSet = arrayListOf(

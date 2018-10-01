@@ -76,7 +76,7 @@ class GloveModel(
         val dataFileContents = walksData.parallelStream().map {
             it.joinToString(separator = " " ,transform = {s -> s})
         }.toList().joinToString( separator = "\n", transform = {s -> s} )
-        File(workingDirectory, "data.txt").writeText(dataFileContents)
+        File(workingDirectory, "GloVe/data.txt").writeText(dataFileContents)
     }
 
     /**
@@ -85,14 +85,14 @@ class GloveModel(
      */
     fun runBlocking(): Word2Vec {
         val pb = ProcessBuilder(File(workingDirectory, "GloVe/run.sh").path);
-        pb.directory(File(workingDirectory))
+        pb.directory(File(workingDirectory,"GloVe"))
         pb.redirectError(ProcessBuilder.Redirect.INHERIT)
         pb.redirectOutput(ProcessBuilder.Redirect.INHERIT)
         val p = pb.start()
         p.waitFor()
 
         println("Glove run complete, loading vectors into memory")
-        return WordVectorSerializer.readWord2VecModel(File(workingDirectory, "vector_output.txt"))
+        return WordVectorSerializer.readWord2VecModel(File(workingDirectory, "GloVe/vector_output.txt"))
     }
 
     private fun extractToWorkingDirectory() {
