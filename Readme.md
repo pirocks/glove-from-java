@@ -1,8 +1,8 @@
-This project allows you to easily call the original, reference implementation of GloVe from a Java/JVM language. Word vectors will be returned in DL4J format. 
+This project allows you to easily call the original, reference implementation of GloVe from a Java/JVM language. Word vectors will be returned in [DL4J](https://deeplearning4j.org/) format. Created because of bugs in DL4J, which made there implementation of GloVe unusable.
 
 ### Dependencies
 
-You will need to have a ND4J backend in your classpath. 
+You will need to have a [ND4J](https://deeplearning4j.org/docs/latest/nd4j-overview) backend in your classpath. 
 
 
 ### Usage
@@ -33,7 +33,11 @@ class Demo{
 
 ```
 
+### Contributing
+
+Feel free to submit issues, feature requests and/or pull requests.
+
 
 ### License
 
-Both GloVe and this are licenced under the Apache 2.0 License
+Both GloVe and this project are licenced under the Apache 2.0 License
