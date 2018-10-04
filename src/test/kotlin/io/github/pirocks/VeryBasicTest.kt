@@ -2,7 +2,7 @@ package io.github.pirocks
 
 import org.junit.Test
 
-class VeryBasicTest{
+class VeryBasicTest {
 
     /**
      * Basic test which checks that glove is run without failure.
@@ -23,6 +23,7 @@ class VeryBasicTest{
                 , arrayListOf("a", "a", "b", "c", "a", "a", "b", "c", "a", "a", "b", "c", "a", "a", "b", "c")
                 , arrayListOf("a", "b", "c", "a", "a", "b", "c", "a", "a", "b", "c", "a", "a", "b", "c", "a"))
         GloveModel.createInNewDirectory(veryBasicDataSet).runBlocking()
+
     }
 
 
