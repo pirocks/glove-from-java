@@ -1,4 +1,4 @@
-This project allows you to easily call the original, reference implementation of GloVe from a Java/JVM language. Word vectors will be returned in [DL4J](https://deeplearning4j.org/) format. Created because of bugs in DL4J, which made there implementation of GloVe unusable.
+This project allows you to easily call the original, reference implementation of [GloVe](https://github.com/stanfordnlp/GloVe) from a Java/JVM language. Word vectors will be returned in [DL4J](https://deeplearning4j.org/) format. Created because of bugs in DL4J, which made their implementation of GloVe unusable.
 
 ### Dependencies
 
