@@ -2,12 +2,13 @@ package io.github.pirocks
 
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer
 import org.deeplearning4j.models.word2vec.Word2Vec
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.attribute.PosixFilePermission
 import java.util.HashSet
-
+import kotlin.math.log
 
 
 /**
@@ -25,7 +26,9 @@ class GloveModel(
         val workingDirectory: String = File(".","/c-glove-from-java/single-run").absolutePath,
         val deleteOnCompletion: Boolean = false
 ) {
+
     companion object {
+        val logger = LoggerFactory.getLogger(GloveModel::class.java)
 
         /**
          * Extracts glove executables and writes data to disk in a new working directory.
@@ -59,6 +62,7 @@ class GloveModel(
             }
             val workingDirectory = candidateWorkingDirectory
             workingDirectory.mkdirs()
+            logger.info("New working difrectory created:${workingDirectory.absolutePath}")
 
             return GloveModel(data,
                     memoryGB,
@@ -74,9 +78,11 @@ class GloveModel(
     }
 
     init {
+        logger.info("Initializing GloVe model with settings: memoryGB:$memoryGB maxIter:$maxIter embeddingSize:$embeddingSize alpha:$alpha windowSize:$windowSize vocabMinCount:$vocabMinCount learningRate:$learningRate workingDirectory:$workingDirectory")
         File(workingDirectory).mkdirs()
         extractToWorkingDirectory()
         val dataFile = File(workingDirectory, "GloVe/data.txt")
+        logger.info("Writing data to ${dataFile.absolutePath}")
         dataFile.writeText("")// clear/create file
         val dataFileContents = walksData.stream().map {
             it.joinToString(separator = " " ,transform = {s -> s})
@@ -96,9 +102,10 @@ class GloveModel(
         pb.redirectError(ProcessBuilder.Redirect.INHERIT)
         pb.redirectOutput(ProcessBuilder.Redirect.INHERIT)
         val p = pb.start()
+        logger.info("Running GloVe...")
         p.waitFor()
 
-        println("Glove run complete, loading vectors into memory")
+        logger.info("Glove run complete, loading vectors into memory")
         val res = WordVectorSerializer.readWord2VecModel(File(workingDirectory, "GloVe/vector_output.txt"))
         if(deleteOnCompletion){
             File(workingDirectory).deleteRecursively()
@@ -123,6 +130,7 @@ class GloveModel(
     }
 
     private fun extractResource(resource: String, replaceRules: Map<String, String> = emptyMap()) {
+        logger.info("Extracting resource: $resource")
         val perms = HashSet<PosixFilePermission>()
         perms.add(PosixFilePermission.OWNER_READ)
         perms.add(PosixFilePermission.OWNER_WRITE)
