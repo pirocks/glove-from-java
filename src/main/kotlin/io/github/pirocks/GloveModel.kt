@@ -5,8 +5,6 @@ import org.deeplearning4j.models.word2vec.Word2Vec
 import java.io.File
 import java.nio.charset.Charset
 import java.nio.file.Files
-import kotlin.streams.toList
-import java.nio.file.Files.setPosixFilePermissions
 import java.nio.file.attribute.PosixFilePermission
 import java.util.HashSet
 
@@ -24,7 +22,8 @@ class GloveModel(
         val windowSize: Int = 15,
         val vocabMinCount: Int = 5,
         val learningRate: Double = 0.05,
-        val workingDirectory: String = File(".","/c-glove-from-java/single-run").absolutePath
+        val workingDirectory: String = File(".","/c-glove-from-java/single-run").absolutePath,
+        val deleteOnCompletion: Boolean = false
 ) {
     companion object {
 
@@ -39,6 +38,7 @@ class GloveModel(
          * @param vocabMinCount Minimum occurences of a word needed for that word to be included in the model
          * @param learningRate Initial learning rate for model
          * @param baseDirectory The base directory to use for training. With every training run of a model, a new subdirectory of `baseDirectory` will be created. Data and executables will be copied into the subdirectory, and all glove output will be stored there.
+         * @param deleteOnCompletion Delete the new working directory after the model has been trained via runBlocking.
          */
         @JvmStatic
         public fun createInNewDirectory(data: Collection<Collection<String>>,
@@ -49,7 +49,8 @@ class GloveModel(
                                         windowSize: Int = 15,
                                         vocabMinCount: Int = 5,
                                         learningRate: Double = 0.05,
-                                        baseDirectory: String = File(/*System.getProperty("java.io.tmpdir")*/".","c-glove-from-java").absolutePath): GloveModel {
+                                        baseDirectory: String = File(/*System.getProperty("java.io.tmpdir")*/".","c-glove-from-java").absolutePath,
+                                        deleteOnCompletion: Boolean = false ): GloveModel {
             var reTryName = 0
             var candidateWorkingDirectory = File(baseDirectory, """run$reTryName""")
             while (candidateWorkingDirectory.exists()) {
@@ -66,17 +67,23 @@ class GloveModel(
                     alpha,
                     windowSize,
                     vocabMinCount,
-                    learningRate, workingDirectory.path)
+                    learningRate,
+                    workingDirectory.path,
+                    deleteOnCompletion)
         }
     }
 
     init {
         File(workingDirectory).mkdirs()
         extractToWorkingDirectory()
-        val dataFileContents = walksData.parallelStream().map {
+        val dataFile = File(workingDirectory, "GloVe/data.txt")
+        dataFile.writeText("")// clear/create file
+        val dataFileContents = walksData.stream().map {
             it.joinToString(separator = " " ,transform = {s -> s})
-        }.toList().joinToString( separator = "\n", transform = {s -> s} )
-        File(workingDirectory, "GloVe/data.txt").writeText(dataFileContents)
+        }.forEach {
+            dataFile.appendText(it + "\n")
+        }//.toList().joinToString( separator = "\n", transform = {s -> s} )
+//        dataFile.writeText(dataFileContents)
     }
 
     /**
@@ -92,7 +99,11 @@ class GloveModel(
         p.waitFor()
 
         println("Glove run complete, loading vectors into memory")
-        return WordVectorSerializer.readWord2VecModel(File(workingDirectory, "GloVe/vector_output.txt"))
+        val res = WordVectorSerializer.readWord2VecModel(File(workingDirectory, "GloVe/vector_output.txt"))
+        if(deleteOnCompletion){
+            File(workingDirectory).deleteRecursively()
+        }
+        return res
     }
 
     private fun extractToWorkingDirectory() {

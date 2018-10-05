@@ -10,7 +10,7 @@
 
 
     <properties>
-        <kotlin.version>1.2.30</kotlin.version>
+        <kotlin.version>1.2.71</kotlin.version>
         <dl4j.version>0.9.1</dl4j.version>
     </properties>
 
@@ -58,16 +58,18 @@
             <artifactId>deeplearning4j-nlp</artifactId>
             <version>0.9.1</version>
         </dependency>
-        <!--<dependency>
-            <groupId>org.nd4j</groupId>
-            <artifactId>nd4j-native</artifactId>
-            <version>0.9.1</version>
-        </dependency>-->
+      <!--<dependency>
+          <groupId>org.nd4j</groupId>
+          <artifactId>nd4j-native</artifactId>
+          <version>0.9.1</version>
+      </dependency>-->
     </dependencies>
 
 
     <build>
-        <plugins>
+      <sourceDirectory>src/main/kotlin</sourceDirectory>
+      <testSourceDirectory>src/test/kotlin</testSourceDirectory>
+      <plugins>
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.0.0</version>
@@ -140,31 +142,17 @@
                 <executions>
                     <execution>
                         <id>compile</id>
-                        <phase>process-sources</phase>
+                        <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <!--<source>src/main/java</source>-->
-                                <source>src/main/kotlin</source>
-                                <source>src/main/resources</source>
-                            </sourceDirs>
-                        </configuration>
                     </execution>
                     <execution>
                         <id>test-compile</id>
-                        <phase>process-test-sources</phase>
+                        <phase>test-compile</phase>
                         <goals>
                             <goal>test-compile</goal>
                         </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <!--<source>src/test/java</source>-->
-                                <source>src/test/kotlin</source>
-                                <source>src/test/resources</source>
-                            </sourceDirs>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
