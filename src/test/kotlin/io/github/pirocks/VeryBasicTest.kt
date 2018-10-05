@@ -22,7 +22,7 @@ class VeryBasicTest {
                 , arrayListOf("a", "b", "a", "c", "a", "b", "a", "c", "a", "b", "a", "c", "a", "b", "a", "c")
                 , arrayListOf("a", "a", "b", "c", "a", "a", "b", "c", "a", "a", "b", "c", "a", "a", "b", "c")
                 , arrayListOf("a", "b", "c", "a", "a", "b", "c", "a", "a", "b", "c", "a", "a", "b", "c", "a"))
-        GloveModel.createInNewDirectory(veryBasicDataSet).runBlocking()
+        GloveModel.createInNewDirectory(veryBasicDataSet,deleteOnCompletion = true).runBlocking()
 
     }
 

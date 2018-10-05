@@ -6,28 +6,37 @@
 
     <groupId>io.github.pirocks</groupId>
     <artifactId>cglove-from-java</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
 
 
     <properties>
         <kotlin.version>1.2.71</kotlin.version>
         <dl4j.version>0.9.1</dl4j.version>
+        <dokka.version>0.9.17</dokka.version>
     </properties>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jcenter</id>
+            <name>JCenter</name>
+            <url>https://jcenter.bintray.com/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <distributionManagement>
-      <repository>
-        <uniqueVersion>false</uniqueVersion>
-        <id>central</id>
-        <name>my repo</name>
-        <url>http://maison0.hopto.org:8082/artifactory/list/local-harddrive1-repo/</url>
-      </repository>
-      <!--<repositories>-->
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>central</id>
+            <name>my repo</name>
+            <url>http://maison0.hopto.org:8082/artifactory/list/local-harddrive1-repo/</url>
+        </repository>
+        <!--<repositories>-->
         <!--<repository>-->
-          <!--<id>project.local</id>-->
-          <!--<name>project</name>-->
-          <!--<url>file:/mnt/harddrive1/maven-repo/</url>-->
+        <!--<id>project.local</id>-->
+        <!--<name>project</name>-->
+        <!--<url>file:/mnt/harddrive1/maven-repo/</url>-->
         <!--</repository>-->
-      <!--</repositories>-->
+        <!--</repositories>-->
     </distributionManagement>
 
     <licenses>
@@ -58,26 +67,46 @@
             <artifactId>deeplearning4j-nlp</artifactId>
             <version>0.9.1</version>
         </dependency>
-      <!--<dependency>
-          <groupId>org.nd4j</groupId>
-          <artifactId>nd4j-native</artifactId>
-          <version>0.9.1</version>
-      </dependency>-->
+        <!--<dependency>
+            <groupId>org.nd4j</groupId>
+            <artifactId>nd4j-native</artifactId>
+            <version>0.9.1</version>
+        </dependency>-->
     </dependencies>
 
 
     <build>
-      <sourceDirectory>src/main/kotlin</sourceDirectory>
-      <testSourceDirectory>src/test/kotlin</testSourceDirectory>
-      <plugins>
+
+        <sourceDirectory>src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>src/test/kotlin</testSourceDirectory>
+
+        <plugins>
+            <plugin>
+                <groupId>org.jetbrains.dokka</groupId>
+                <artifactId>dokka-maven-plugin</artifactId>
+                <version>${dokka.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>dokka</goal>
+                            <goal>javadoc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <outputFormat>javadoc</outputFormat>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.0.0</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
-                        <phase>deploy</phase>
-                        <goals><goal>jar-no-fork</goal></goals>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -87,8 +116,9 @@
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
-                        <phase>deploy</phase>
-                        <goals><goal>jar</goal></goals>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -99,8 +129,9 @@
                 <executions>
                     <execution>
                         <id>deploy</id>
-                        <phase>deploy</phase>
-                        <goals><goal>deploy</goal></goals>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -146,6 +177,13 @@
                         <goals>
                             <goal>compile</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <!--<source>src/main/java</source>-->
+                                <source>src/main/kotlin</source>
+                                <source>src/main/resources</source>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>test-compile</id>
@@ -153,6 +191,13 @@
                         <goals>
                             <goal>test-compile</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <!--<source>src/test/java</source>-->
+                                <source>src/test/kotlin</source>
+                                <source>src/test/resources</source>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
