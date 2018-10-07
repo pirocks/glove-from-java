@@ -6,7 +6,7 @@
 
     <groupId>io.github.pirocks</groupId>
     <artifactId>cglove-from-java</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
 
 
     <properties>
@@ -24,11 +24,23 @@
     </pluginRepositories>
 
     <distributionManagement>
-        <repository>
+        <!--<repository>
             <uniqueVersion>false</uniqueVersion>
-            <id>central</id>
+            <id>artifactory</id>
             <name>my repo</name>
             <url>http://maison0.hopto.org:8082/artifactory/list/local-harddrive1-repo/</url>
+        </repository>-->
+        <snapshotRepository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>ossrh</id>
+            <name>snapshots repo</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>ossrh</id>
+            <name>release repo</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
         <!--<repositories>-->
         <!--<repository>-->
@@ -89,8 +101,8 @@
                     <execution>
                         <phase>package</phase>
                         <goals>
-                            <goal>dokka</goal>
-                            <goal>javadoc</goal>
+                            <!--<goal>dokka</goal>-->
+                            <goal>javadocJar</goal>
                         </goals>
                     </execution>
                 </executions>
