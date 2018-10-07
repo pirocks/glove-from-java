@@ -7,6 +7,15 @@ You will need to have a [ND4J](https://deeplearning4j.org/docs/latest/nd4j-overv
 
 ### Usage
 
+Maven dependency:
+```xml
+<dependency>
+    <groupId>io.github.pirocks</groupId>
+    <artifactId>cglove-from-java</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+
 ```kotlin
 //call like so:
 fun main(){
