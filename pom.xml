@@ -118,6 +118,7 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration><skip>false</skip></configuration>
             </plugin>
             <plugin>
                 <groupId>org.jetbrains.dokka</groupId>
