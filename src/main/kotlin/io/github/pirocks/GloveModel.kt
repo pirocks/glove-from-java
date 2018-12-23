@@ -8,6 +8,8 @@ import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.attribute.PosixFilePermission
 import java.util.HashSet
+import java.util.concurrent.*
+import java.util.concurrent.locks.ReentrantLock
 
 
 /**
@@ -28,6 +30,7 @@ class GloveModel(
 
     companion object {
         val logger = LoggerFactory.getLogger(GloveModel::class.java)
+        val fileSystemLock = ReentrantLock()
 
         /**
          * Extracts glove executables and writes data to disk in a new working directory.
@@ -77,12 +80,15 @@ class GloveModel(
     }
 
     init {
+        //Lock prevents two different model runs from using the same run directory, and interfering with each other. Does not protect against multiple processes.
+        fileSystemLock.lock()
         logger.info("Initializing GloVe model with settings: memoryGB:$memoryGB maxIter:$maxIter embeddingSize:$embeddingSize alpha:$alpha windowSize:$windowSize vocabMinCount:$vocabMinCount learningRate:$learningRate workingDirectory:$workingDirectory")
         File(workingDirectory).mkdirs()
         extractToWorkingDirectory()
         val dataFile = File(workingDirectory, "GloVe/data.txt")
         logger.info("Writing data to ${dataFile.absolutePath}")
         dataFile.writeText("")// clear/create file
+        fileSystemLock.unlock()
         val dataFileContents = walksData.stream().map {
             it.joinToString(separator = " " ,transform = {s -> s})
         }.forEach {
@@ -95,7 +101,7 @@ class GloveModel(
      * Runs the model fitting process
      * @return A dl4j Word2Vec model, containing the vectors gennerated by GloVe.
      */
-    fun runBlocking(): Word2Vec {
+    public fun runBlocking(): Word2Vec {
         val pb = ProcessBuilder(File(workingDirectory, "GloVe/run.sh").path);
         pb.directory(File(workingDirectory,"GloVe"))
         pb.redirectError(ProcessBuilder.Redirect.INHERIT)
@@ -110,6 +116,13 @@ class GloveModel(
             File(workingDirectory).deleteRecursively()
         }
         return res
+    }
+
+    /**
+     * Same as runBlocking, but asynchronous.
+     */
+    public fun runAsync(): Future<Word2Vec> {
+        return Executors.newSingleThreadScheduledExecutor().submit(Callable { runBlocking() })
     }
 
     private fun extractToWorkingDirectory() {
